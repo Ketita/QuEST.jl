@@ -1,6 +1,6 @@
 # QuEST_jl
-[![Build Status](https://travis-ci.com/TartuQC/QuEST_jl.svg?branch=master)](https://travis-ci.com/TartuQC/QuEST_jl)
-[![Coverage Status](https://coveralls.io/repos/github/TartuQC/QuEST_jl/badge.svg?branch=master)](https://coveralls.io/github/TartuQC/QuEST_jl?branch=master)
+[![Build Status](https://travis-ci.com/TartuQC/QuEST_jl.svg?branch=dev)](https://travis-ci.com/TartuQC/QuEST_jl)
+[![Coverage Status](https://coveralls.io/repos/github/TartuQC/QuEST_jl/badge.svg?branch=dev)](https://coveralls.io/github/TartuQC/QuEST_jl?branch=dev)
 #### Julia wrapper for the Quantum Exact Simulation Toolkit (QuEST)
 
 This package makes available the high-performance quantum circuit
