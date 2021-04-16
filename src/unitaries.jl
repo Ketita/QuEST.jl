@@ -43,7 +43,7 @@ function controlledMultiQubitUnitary(qureg   ::QuEST_Types.Qureg,
                  1:length(targs) )
     @assert ctrl ∉ targs
 
-    @assert u.numQubits == qureg.numQubitsRepresented
+    @assert u.numQubits < qureg.numQubitsRepresented
 
     ccall(:controlledMultiQubitUnitary, Cvoid,
           (QuEST_Types.Qureg, Cint, Ptr{Cint}, Cint,          QuEST_Types.ComplexMatrixN),
@@ -97,9 +97,9 @@ function controlledPhaseShift(qureg    ::QuEST_Types.Qureg,
                               idQubit2 ::Integer,
                               angle    ::Qreal)   ::Nothing
 
-    @assert 0 ≤ controlQubit < qureg.numQubitsRepresented
-    @assert 0 ≤ targetQubit  < qureg.numQubitsRepresented
-    @assert controlQubit != targetQubit
+    @assert 0 ≤ idQubit1 < qureg.numQubitsRepresented
+    @assert 0 ≤ idQubit2  < qureg.numQubitsRepresented
+    @assert idQubit1 != idQubit2
 
     ccall(:controlledPhaseShift,  Cvoid,
           (QuEST_Types.Qureg, Cint,     Cint,      Qreal),
@@ -273,11 +273,12 @@ function multiControlledTwoQubitUnitary(qureg           ::QuEST_Types.Qureg,
                                         targetQubit2    ::Integer,
                                         U               ::Matrix{Complex{Qreal}}) ::Nothing
 
-    @assert 0 ≤ controlQubit < qureg.numQubitsRepresented
+    @assert 0 ≤ length(controlQubits) ≤ qureg.numQubitsRepresented -2
     @assert 0 ≤ targetQubit1 < qureg.numQubitsRepresented
     @assert 0 ≤ targetQubit2 < qureg.numQubitsRepresented
     @assert targetQubit1 != targetQubit2
-    @assert controlQubit ∉ [targetQubit1,targetQubit2]
+    @assert targetQubit1 ∉ controlQubits
+    @assert targetQubit2 ∉ controlQubits
 
     u = _quest_mtx_4(U)
 
@@ -302,7 +303,7 @@ function multiQubitUnitary(qureg ::QuEST_Types.Qureg,
                            targs ::Vector{QubitIdx},
                            u     ::QuEST_Types.ComplexMatrixN)  ::Nothing
 
-    @assert u.numQubits == qureg.numQubitsRepresented
+    @assert u.numQubits ≤ qureg.numQubitsRepresented
 
     ccall(:multiQubitUnitary, Cvoid,
           (QuEST_Types.Qureg, Ptr{Cint}, Cint,           QuEST_Types.ComplexMatrixN),

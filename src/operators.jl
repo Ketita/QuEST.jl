@@ -45,7 +45,7 @@ function applyMultiControlledMatrixN(qureg          :: QuEST_Types.Qureg,
                                      u              :: QuEST_Types.ComplexMatrixN)  ::Nothing
 
     local numCtrls ::Cint = length(ctrlQubits)
-    local numTargs ::Cint = lenght(targQubits)
+    local numTargs ::Cint = length(targQubits)
 
     @assert numTargs == u.numQubits
     @assert isdisjoint(ctrlQubits,targQubits)
@@ -70,7 +70,7 @@ function applyPauliSum(inQureg        ::QuEST_Types.Qureg,
                        numSumTerms    ::Integer,
                        outQureg       ::QuEST_Types.Qureg)          ::Nothing
 
-    @assert length(termCoeffs) == numSumTerms * inQureg.numQubitsRepresented
+    @assert length(allPauliCodes) == numSumTerms * inQureg.numQubitsRepresented
 
     ccall(:applyPauliSum, Cvoid,
           (QuEST_Types.Qureg, Ptr{QuEST_Types.pauliOpType}, Ptr{Qreal}, Cint,        QuEST_Types.Qureg),

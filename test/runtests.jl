@@ -323,7 +323,7 @@ function test_controlledCompactUnitary()
         norm = sqrt(α*conj(α) + β*conj(β))
         α /= norm
         β /= norm
-        numQubits = rand(1:12)
+        numQubits = rand(2:12)
         target = rand(1:numQubits)
         control = rand(1:numQubits)
         while target == control
@@ -1888,15 +1888,13 @@ function test_measureWithStats()
 
         QuEST.rotateX(qureg, 0, θ)
 
-        prob = Vector{qreal}(undef, 1)
-
-        cbit = QuEST.measureWithStats(qureg, 0, prob)
+        cbit, prob = QuEST.measureWithStats(qureg, 0)
 
         @test cbit in [0, 1]
         if cbit == 0 
-            @test prob[1] ≈ (1 + cos(θ))/2
+            @test prob ≈ (1 + cos(θ))/2
         else
-            @test prob[1] ≈ (1 - cos(θ))/2
+            @test prob ≈ (1 - cos(θ))/2
         end
 
     end
@@ -2045,7 +2043,7 @@ function test_applyMatrixN()
         v=U*v
         
         
-        QuEST.applyMatrixN(qureg, targs, num_targs, M)
+        QuEST.applyMatrixN(qureg, targs, M)
 
         reals = unsafe_wrap(Vector{qreal}, qureg.stateVec.real, 2^numQubits)
         imags = unsafe_wrap(Vector{qreal}, qureg.stateVec.imag, 2^numQubits)
@@ -2088,7 +2086,7 @@ function test_applyMultiControlledMatrixN()
             QuEST.pauliX(qureg, ind)
         end
         #QuEST.pauliX(qureg, 0)
-        QuEST.applyMultiControlledMatrixN(qureg, ctrls, num_ctrls, targs, num_targs, M)
+        QuEST.applyMultiControlledMatrixN(qureg, ctrls, targs, M)
         
         reals = unsafe_wrap(Vector{qreal}, qureg.stateVec.real, 2^numQubits)
         imags = unsafe_wrap(Vector{qreal}, qureg.stateVec.imag, 2^numQubits)
@@ -2404,7 +2402,7 @@ function test_calcExpecDiagonalOp()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         
 
         op = QuEST.createDiagonalOp(numQubits, env)
@@ -2469,7 +2467,7 @@ function test_calcExpecPauliHamil()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         
 
         lhs = transpose(conj(state))*H*state
@@ -2529,7 +2527,7 @@ function test_calcExpecPauliProd()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         
 
         lhs = transpose(conj(state))*H*state
@@ -2586,7 +2584,7 @@ function test_calcExpecPauliSum()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         
 
         lhs = transpose(conj(state))*H*state
@@ -2620,8 +2618,8 @@ function test_calcFidelity()
         state2 = rand(Complex{qreal}, 2^numQubits)
         state2 /= norm(state2)
 
-        QuEST.initStateFromAmps(qureg1, state1)
-        QuEST.initStateFromAmps(qureg2, state2)
+        QuEST.initStateFromAmps(qureg1, real.(state1), imag.(state1))
+        QuEST.initStateFromAmps(qureg2, real.(state2), imag.(state2))
 
         lhs = abs(transpose(conj(state1))*state2)^2
 
@@ -2737,7 +2735,7 @@ function test_calcProbOfOutcome()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         
         Id_right = 1.0*Matrix(I,2^target, 2^target)
         Id_left = 1.0*Matrix(I,2^(numQubits - target -1), 2^(numQubits - target -1))
@@ -2819,7 +2817,7 @@ function test_amp_funcs()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         
         for ind =0:2^numQubits-1
             @test QuEST.getAmp(qureg, ind) ≈ state[ind+1]
@@ -2879,7 +2877,7 @@ function test_cloneQureg()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg1, state)
+        QuEST.initStateFromAmps(qureg1, real.(state), imag.(state))
 
         QuEST.cloneQureg(qureg2, qureg1)
         
@@ -2967,7 +2965,7 @@ function test_initPureState()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg1, state)
+        QuEST.initStateFromAmps(qureg1, real.(state), imag.(state))
 
         QuEST.initPureState(qureg2, qureg1)
         
@@ -2992,7 +2990,7 @@ function test_initStateFromAmps()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg1, state)
+        QuEST.initStateFromAmps(qureg1, real.(state), imag.(state))
         
         for ind =0:2^numQubits-1
             @test QuEST.getAmp(qureg1, ind) ≈ state[ind+1]
@@ -3035,7 +3033,7 @@ function test_setAmps()
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
 
-        QuEST.initStateFromAmps(qureg1, state)
+        QuEST.initStateFromAmps(qureg1, real.(state), imag.(state))
 
         start_ind = rand(0:2^numQubits-2)
         finish_ind = rand(start_ind:2^numQubits-1)
@@ -3043,7 +3041,7 @@ function test_setAmps()
 
         new_amps = rand(Complex{qreal}, numAmps)
 
-        QuEST.setAmps(qureg1, start_ind, new_amps, numAmps)
+        QuEST.setAmps(qureg1, start_ind, real.(new_amps), imag.(new_amps), numAmps)
         
         for ind =0:2^numQubits-1
             if ind < start_ind
@@ -3078,9 +3076,9 @@ function test_setWeightedQureg()
         state3 = rand(Complex{qreal}, 2^numQubits)
         state3 /= norm(state3)
 
-        QuEST.initStateFromAmps(qureg1, state1)
-        QuEST.initStateFromAmps(qureg2, state2)
-        QuEST.initStateFromAmps(qureg3, state3)
+        QuEST.initStateFromAmps(qureg1, real.(state1), imag.(state1))
+        QuEST.initStateFromAmps(qureg2, real.(state2), imag.(state2))
+        QuEST.initStateFromAmps(qureg3, real.(state3), imag.(state3))
 
         fac1 = rand(Complex{qreal})
         fac2 = rand(Complex{qreal})
@@ -3266,7 +3264,7 @@ function test_GPU()
         qureg = QuEST.createQureg(numQubits, env)
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
         QuEST.copyStateToGPU(qureg)
         QuEST.copyStateFromGPU(qureg)
         #env_str = QuEST.getEnvironmentString(env, qureg)
@@ -3416,7 +3414,7 @@ function test_reportState()
         qureg = QuEST.createQureg(numQubits, env)
         state = rand(Complex{qreal}, 2^numQubits)
         state /= norm(state)
-        QuEST.initStateFromAmps(qureg, state)
+        QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
 
         original_stdout = stdout
         read_pipe, write_pipe = redirect_stdout()
@@ -3482,7 +3480,7 @@ function test_sync()
     qureg = QuEST.createQureg(numQubits, env)
     state = rand(Complex{qreal}, 2^numQubits)
     state /= norm(state)
-    QuEST.initStateFromAmps(qureg, state)
+    QuEST.initStateFromAmps(qureg, real.(state), imag.(state))
 
     QuEST.syncQuESTEnv(env)
     @test QuEST.syncQuESTSuccess(1) == 1
@@ -3525,6 +3523,10 @@ end
     test_compactUnitary()
 end
 
+@testset "test_compactUnitary" begin
+    test_compactUnitary()
+end
+
 @testset "test_controlledCompactUnitary" begin
     test_controlledCompactUnitary()
 end
@@ -3542,6 +3544,10 @@ end
 end
 
 @testset "test_controlledPauliY" begin    
+    test_controlledPhaseFlip()
+end
+
+@testset "test_controlledPhaseFlip" begin
     test_controlledPhaseFlip()
 end
 

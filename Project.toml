@@ -1,6 +1,6 @@
 name = "QuEST_jl"
 uuid = "2459ce63-a949-4045-b34d-4c0e485dd26d"
-authors = ["dojt <dotheis.work@gmail.com>"]
+authors = ["Dirk Oliver Theis <dotheis.work@gmail.com>", "Bahman Ghandchi <b.ghandchi@gmail.com>", "Alejandro Villoria <alexvilloria26@gmail.com>", "Anabel Ovide <anabel.ovide@gmail.com>"]
 version = "0.1.0"
 
 [deps]

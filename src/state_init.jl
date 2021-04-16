@@ -33,7 +33,7 @@ function initPureState(qureg ::QuEST_Types.Qureg,
                        pure  ::QuEST_Types.Qureg) ::Nothing
 
     @assert qureg.numQubitsRepresented == pure.numQubitsRepresented
-    @assert ! pure.isDensityMatrix
+    @assert pure.isDensityMatrix == 0
 
     ccall(:initPureState, Cvoid,
           (QuEST_Types.Qureg,  QuEST_Types.Qureg),
@@ -63,9 +63,10 @@ end
 function setAmps(qureg        ::QuEST_Types.Qureg,
                  startIdx     ::Integer,
                  amps_real    ::Vector{Qreal},
-                 amps_imag    ::Vector{Qreal})   :: Nothing
+                 amps_imag    ::Vector{Qreal},
+                 numAmps      ::Clonglong)   :: Nothing
 
-    local   numAmps ::Clonglong =  length(amps_real)
+    @assert numAmps             == length(amps_real)
     @assert numAmps             == length(amps_imag)
     @assert startIdx + numAmps  <= qureg.numAmpsTotal
 
